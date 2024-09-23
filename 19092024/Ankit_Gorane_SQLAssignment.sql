@@ -239,6 +239,211 @@ ON c.customer_id = o.customer_id
 GROUP BY c.customer_name
 ORDER BY average_order_value DESC;
 
+#Q7
+SELECT 
+    o.order_id, 
+    c.customer_id, 
+    c.customer_name, 
+    SUM(oi.quantity * p.price) AS total_revenue
+FROM 
+    Orders o
+JOIN 
+    Customers c ON o.customer_id = c.customer_id
+JOIN 
+    OrderItems oi ON o.order_id = oi.order_id
+JOIN 
+    Products p ON oi.product_id = p.product_id
+GROUP BY 
+    o.order_id, c.customer_id, c.customer_name
+ORDER BY 
+    total_revenue DESC
+LIMIT 1;
+
+#Q8
+SELECT 
+    p.product_name, 
+    COUNT(oi.order_id) AS total_orders
+FROM 
+    Products p
+JOIN 
+    OrderItems oi ON p.product_id = oi.product_id
+WHERE 
+    p.category = 'Electronic Gadgets'
+GROUP BY 
+    p.product_name
+ORDER BY 
+    total_orders DESC;
+
+
+#Q9
+SELECT 
+    c.customer_id, 
+    c.customer_name
+FROM 
+    Customers c
+JOIN 
+    Orders o ON c.customer_id = o.customer_id
+JOIN 
+    OrderItems oi ON o.order_id = oi.order_id
+JOIN 
+    Products p ON oi.product_id = p.product_id
+WHERE 
+    p.product_name = 'Laptop';
+    
+    
+#Q10
+SELECT 
+    SUM(oi.quantity * p.price) AS total_revenue
+FROM 
+    Orders o
+JOIN 
+    OrderItems oi ON o.order_id = oi.order_id
+JOIN 
+    Products p ON oi.product_id = p.product_id
+WHERE 
+    o.order_date BETWEEN '2024-09-05' AND '2024-12-05';  
+    
+    
+    #Task 4
+    
+    #Q1
+SELECT 
+    c.customer_id, 
+    c.customer_name
+FROM 
+    Customers c
+LEFT JOIN 
+    Orders o ON c.customer_id = o.customer_id
+WHERE 
+    o.order_id IS NULL;
+
+#Q2
+
+SELECT 
+    COUNT(product_id) AS total_products
+FROM 
+    Products
+WHERE 
+    available_for_sale = 1;  
+    
+#Q3
+
+SELECT 
+    SUM(oi.quantity * p.price) AS total_revenue
+FROM 
+    Orders o
+JOIN 
+    OrderItems oi ON o.order_id = oi.order_id
+JOIN 
+    Products p ON oi.product_id = p.product_id;
+
+#Q4
+
+SELECT 
+    AVG(oi.quantity) AS average_quantity_ordered
+FROM 
+    Products p
+JOIN 
+    OrderItems oi ON p.product_id = oi.product_id
+WHERE 
+    p.category = 'Electronics';  
+    
+#Q5
+
+SELECT 
+    SUM(oi.quantity * p.price) AS total_revenue
+FROM 
+    Orders o
+JOIN 
+    OrderItems oi ON o.order_id = oi.order_id
+JOIN 
+    Products p ON oi.product_id = p.product_id
+WHERE 
+    o.customer_id = 2;  
+
+#Q6
+
+SELECT 
+    c.customer_name, 
+    COUNT(o.order_id) AS total_orders
+FROM 
+    Customers c
+JOIN 
+    Orders o ON c.customer_id = o.customer_id
+GROUP BY 
+    c.customer_name
+ORDER BY 
+    total_orders DESC
+LIMIT 1;
+
+#Q7
+SELECT 
+    p.category, 
+    SUM(oi.quantity) AS total_quantity_ordered
+FROM 
+    Products p
+JOIN 
+    OrderItems oi ON p.product_id = oi.product_id
+GROUP BY 
+    p.category
+ORDER BY 
+    total_quantity_ordered DESC
+LIMIT 1;
+
+#Q8
+SELECT 
+    c.customer_name, 
+    SUM(oi.quantity * p.price) AS total_spending
+FROM 
+    Customers c
+JOIN 
+    Orders o ON c.customer_id = o.customer_id
+JOIN 
+    OrderItems oi ON o.order_id = oi.order_id
+JOIN 
+    Products p ON oi.product_id = p.product_id
+WHERE 
+    p.category = 'Electronic Gadgets'
+GROUP BY 
+    c.customer_name
+ORDER BY 
+    total_spending DESC
+LIMIT 1;
+
+#Q9
+
+SELECT 
+    AVG(total_revenue_per_order) AS average_order_value
+FROM (
+    SELECT 
+        o.order_id, 
+        SUM(oi.quantity * p.price) AS total_revenue_per_order
+    FROM 
+        Orders o
+    JOIN 
+        OrderItems oi ON o.order_id = oi.order_id
+    JOIN 
+        Products p ON oi.product_id = p.product_id
+    GROUP BY 
+        o.order_id
+) AS order_revenues;
+
+#Q10
+
+SELECT 
+    c.customer_name, 
+    COUNT(o.order_id) AS total_orders
+FROM 
+    Customers c
+LEFT JOIN 
+    Orders o ON c.customer_id = o.customer_id
+GROUP BY 
+    c.customer_name
+ORDER BY 
+    total_orders DESC;
+
+
+    
 
 
 
