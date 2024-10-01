@@ -16,8 +16,8 @@ public class Car extends Vehicle {
             double totalCost = days * getRentalPrice();
 
             setRented(true);
-            System.out.println(getName() + " (Car) has been rented for " + days + " day(s) at $" + getRentalPrice() + " per day.");
-            System.out.println("Total Rental Cost: $" + totalCost);
+            System.out.println(getName() + " (Car) has been rented for " + days + " day(s) at Rs" + getRentalPrice() + " per day.");
+            System.out.println("Total Rental Cost: Rs" + totalCost);
         } else {
             System.out.println(getName() + " (Car) is already rented.");
         }
