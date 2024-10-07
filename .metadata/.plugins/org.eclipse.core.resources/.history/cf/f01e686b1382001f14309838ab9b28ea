@@ -1,0 +1,5 @@
+package com.revshop.user_service.model;
+
+public class Role {
+
+}

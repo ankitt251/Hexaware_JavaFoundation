@@ -1,0 +1,24 @@
+<%@ taglib uri="http://jakarta.apache.org/taglibs/standard/1.2/jsp/core" prefix="c" %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - E-commerce</title>
+    <link rel="stylesheet" href="<c:url value='/css/style.css' />"> <!-- Add your CSS here -->
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="<c:url value='/' />">Home</a></li>
+            <li><a href="<c:url value='/login' />">Login</a></li>
+            <li><a href="<c:url value='/register' />">Register</a></li>
+        </ul>
+    </nav>
+
+    <div class="content">
+        <h1>Welcome to E-commerce Application</h1>
+        <p>This is the homepage for our e-commerce platform.</p>
+    </div>
+</body>
+</html>

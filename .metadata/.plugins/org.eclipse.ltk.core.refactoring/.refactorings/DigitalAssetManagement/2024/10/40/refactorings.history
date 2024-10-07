@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename package &apos;AssetManagementService&apos; to &apos;com.hexaware.dao&apos;&#x0D;&#x0A;- Original project: &apos;DigitalAssetManagement&apos;&#x0D;&#x0A;- Original element: &apos;DigitalAssetManagement/src/AssetManagementService&apos;&#x0D;&#x0A;- Renamed element: &apos;DigitalAssetManagement/src/com.hexaware.dao&apos;&#x0D;&#x0A;- Update references to refactored element&#x0D;&#x0A;- Update textual occurrences in comments and strings" description="Rename package &apos;AssetManagementService&apos;" flags="589830" hierarchical="false" id="org.eclipse.jdt.ui.rename.package" input="/src&lt;AssetManagementService" name="com.hexaware.dao" qualified="false" references="true" stamp="1728015694604" textual="false" version="1.0"/>
+</session>

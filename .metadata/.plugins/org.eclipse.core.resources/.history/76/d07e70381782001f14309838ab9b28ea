@@ -1,0 +1,49 @@
+package com.revshop.user_service.service;
+
+import com.revshop.user_service.model.User;
+import com.revshop.user_service.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import java.util.HashSet;
+import java.util.Optional;
+
+@Service
+public class UserService implements UserDetailsService {
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    // Register a new user
+    public User registerUser(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRoles(new HashSet<>()); // Set roles as needed
+        return userRepository.save(user);
+    }
+
+    // Find user by username for authentication
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Optional<User> userOptional = userRepository.findByUsername(username);
+        User user = userOptional.orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        // Here you should return a UserDetails object
+        return new org.springframework.security.core.userdetails.User(
+                user.getUsername(), 
+                user.getPassword(), 
+                user.getRoles() // Assuming you have a method to get authorities from roles
+        );
+    }
+
+    // Additional method to find user by username
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username).orElse(null);
+    }
+}

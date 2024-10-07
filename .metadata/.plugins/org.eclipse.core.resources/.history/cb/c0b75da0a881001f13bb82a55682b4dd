@@ -1,0 +1,112 @@
+package com.revshop.frontend.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.HashMap;
+import java.util.Map;
+@Controller
+public class UserController {
+
+    @GetMapping("/")
+    public String home() {
+        return "index"; // This will return index.jsp (Home Page)
+    }
+
+    @GetMapping("/login")
+    public String showLoginPage(Model model) {
+        model.addAttribute("errorMessage", null); // Clear any previous error message
+        return "login"; // Refers to login.jsp
+    }
+
+    @PostMapping("/login")
+    public String login(
+            @RequestParam String username,
+            @RequestParam String password,
+            RedirectAttributes redirectAttributes) {
+        // Here, you'll call the User-Service API through the API Gateway.
+        // Example: Use RestTemplate or WebClient to authenticate the user
+        
+        // Assume this is the response after calling the User-Service
+        boolean isAuthenticated = callUserServiceForLogin(username, password);
+        
+        if (isAuthenticated) {
+            return "redirect:/dashboard"; // Redirect to some dashboard on success
+        } else {
+            redirectAttributes.addFlashAttribute("errorMessage", "Invalid username or password");
+            return "redirect:/login"; // Redirect back to login page with error
+        }
+    }
+
+    @GetMapping("/register")
+    public String showRegisterPage() {
+        return "register"; // Refers to register.jsp
+    }
+
+    @PostMapping("/register")
+    public String register(
+            @RequestParam String username,
+            @RequestParam String password,
+            @RequestParam String role,
+            RedirectAttributes redirectAttributes) {
+        // Call the User-Service to register a user
+        boolean isRegistered = callUserServiceForRegister(username, password, role);
+
+        if (isRegistered) {
+            return "redirect:/login"; // Redirect to login page on success
+        } else {
+            // Handle registration failure (if required)
+            return "redirect:/register"; // Redirect to register again on failure
+        }
+    }
+
+    // Example methods to call the User-Service (should implement with RestTemplate or WebClient)
+    @Autowired
+    private RestTemplate restTemplate;
+
+    private boolean callUserServiceForLogin(String username, String password) {
+        String url = "http://api-gateway/api/users/login";
+        
+        try {
+            // Prepare the request body
+            Map<String, String> request = new HashMap<>();
+            request.put("username", username);
+            request.put("password", password);
+            
+            // Send POST request to User-Service via API Gateway
+            ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
+            
+            return response.getStatusCode() == HttpStatus.OK;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private boolean callUserServiceForRegister(String username, String password, String role) {
+        String url = "http://8085/api/users/register";
+        
+        try {
+            // Prepare the request body
+            Map<String, String> request = new HashMap<>();
+            request.put("username", username);
+            request.put("password", password);
+            request.put("role", role);
+            
+            // Send POST request to User-Service via API Gateway
+            ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
+            
+            return response.getStatusCode() == HttpStatus.OK;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+}

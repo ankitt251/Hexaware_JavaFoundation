@@ -1,0 +1,297 @@
+package com.hexaware.main;
+
+import com.hexaware.dao.AssetManagementService;
+import com.hexaware.dao.AssetManagementServiceImpl;
+import com.hexaware.entity.Asset;
+import com.hexaware.exceptions.AssetNotFoundException;
+import com.hexaware.exceptions.AssetNotMaintainException;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Scanner;
+
+public class MainModule {
+    private static final Scanner scanner = new Scanner(System.in);
+    private static AssetManagementService assetService = new AssetManagementServiceImpl();
+
+    public static void main(String[] args) {
+        while (true) {
+            showMenu();
+            int choice = scanner.nextInt();
+            scanner.nextLine();  // Consume newline character
+            switch (choice) {
+                case 1:
+                    addAsset();
+                    break;
+                case 2:
+                    updateAsset();
+                    break;
+                case 3:
+                    deleteAsset();
+                    break;
+                case 4:
+                    allocateAsset();
+                    break;
+                case 5:
+                    deallocateAsset();
+                    break;
+                case 6:
+                    performMaintenance();
+                    break;
+                case 7:
+                    reserveAsset();
+                    break;
+                case 8:
+                    withdrawReservation();
+                    break;
+                case 9:
+                    System.out.println("Exiting application...");
+                    return;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        }
+    }
+
+    private static void showMenu() {
+        System.out.println("====== Digital Asset Management System ======");
+        System.out.println("1. Add Asset");
+        System.out.println("2. Update Asset");
+        System.out.println("3. Delete Asset");
+        System.out.println("4. Allocate Asset");
+        System.out.println("5. Deallocate Asset");
+        System.out.println("6. Perform Maintenance");
+        System.out.println("7. Reserve Asset");
+        System.out.println("8. Withdraw Reservation");
+        System.out.println("9. Exit");
+        System.out.print("Choose an option: ");
+    }
+
+    private static void addAsset() {
+        System.out.println("Enter Asset Details");
+        
+        System.out.print("Asset ID: ");
+        int assetId = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
+
+        System.out.print("Name: ");
+        String name = scanner.nextLine();
+        System.out.print("Type: ");
+        String type = scanner.nextLine();
+        System.out.print("Serial Number: ");
+        String serialNumber = scanner.nextLine();
+        System.out.print("Purchase Date (YYYY-MM-DD): ");
+        String purchaseDateStr = scanner.nextLine();
+        System.out.print("Location: ");
+        String location = scanner.nextLine();
+        System.out.print("Status: ");
+        String status = scanner.nextLine();
+        System.out.print("Owner Employee ID: ");
+        int ownerId = scanner.nextInt();
+
+        // Parse purchase date
+        Date purchaseDate = parseDate(purchaseDateStr);
+        if (purchaseDate == null) {
+            System.out.println("Invalid date format. Please use YYYY-MM-DD.");
+            return;
+        }
+
+        Asset asset = new Asset(assetId, name, type, serialNumber, purchaseDate, location, status, ownerId);
+
+        try {
+            if (assetService.addAsset(asset)) {
+                System.out.println("Asset added successfully.");
+            } else {
+                System.out.println("Failed to add asset.");
+            }
+        } catch (Exception e) {
+            System.out.println("Error adding asset: " + e.getMessage());
+        }
+    }
+
+    private static void updateAsset() {
+        System.out.print("Enter Asset ID to update: ");
+        int assetId = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
+        System.out.println("Enter new details for the Asset");
+        
+        System.out.print("Name: ");
+        String name = scanner.nextLine();
+        System.out.print("Type: ");
+        String type = scanner.nextLine();
+        System.out.print("Serial Number: ");
+        String serialNumber = scanner.nextLine();
+        System.out.print("Purchase Date (YYYY-MM-DD): ");
+        String purchaseDateStr = scanner.nextLine();
+        System.out.print("Location: ");
+        String location = scanner.nextLine();
+        System.out.print("Status: ");
+        String status = scanner.nextLine();
+        System.out.print("Owner Employee ID: ");
+        int ownerId = scanner.nextInt();
+
+        // Parse purchase date
+        Date purchaseDate = parseDate(purchaseDateStr);
+        if (purchaseDate == null) {
+            System.out.println("Invalid date format. Please use YYYY-MM-DD.");
+            return;
+        }
+
+        Asset asset = new Asset(assetId, name, type, serialNumber, purchaseDate, location, status, ownerId);
+
+        try {
+            if (assetService.updateAsset(asset)) {
+                System.out.println("Asset updated successfully.");
+            } else {
+                System.out.println("Failed to update asset.");
+            }
+        } catch (AssetNotFoundException e) {
+            System.out.println("Asset not found: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Error updating asset: " + e.getMessage());
+        }
+    }
+
+    private static void deleteAsset() {
+        System.out.print("Enter Asset ID to delete: ");
+        int assetId = scanner.nextInt();
+
+        try {
+            if (assetService.deleteAsset(assetId)) {
+                System.out.println("Asset deleted successfully.");
+            } else {
+                System.out.println("Failed to delete asset.");
+            }
+        } catch (AssetNotFoundException e) {
+            System.out.println("Asset not found: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Error deleting asset: " + e.getMessage());
+        }
+    }
+
+    private static void allocateAsset() {
+        System.out.print("Enter Asset ID to allocate: ");
+        int assetId = scanner.nextInt();
+        System.out.print("Enter Employee ID to allocate asset to: ");
+        int employeeId = scanner.nextInt();
+        System.out.print("Enter Allocation Date (YYYY-MM-DD): ");
+        String allocationDateStr = scanner.next();
+
+        try {
+            Date allocationDate = parseDate(allocationDateStr);
+            if (allocationDate == null) {
+                System.out.println("Invalid date format. Please use YYYY-MM-DD.");
+                return;
+            }
+
+            if (assetService.allocateAsset(assetId, employeeId, allocationDateStr)) {
+                System.out.println("Asset allocated successfully.");
+            } else {
+                System.out.println("Failed to allocate asset.");
+            }
+        } catch (AssetNotFoundException e) {
+            System.out.println("Asset not found: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Error allocating asset: " + e.getMessage());
+        }
+    }
+
+    private static void deallocateAsset() {
+        System.out.print("Enter Asset ID to deallocate: ");
+        int assetId = scanner.nextInt();
+        System.out.print("Enter Employee ID: ");
+        int employeeId = scanner.nextInt();
+        System.out.print("Enter Return Date (YYYY-MM-DD): ");
+        String returnDateStr = scanner.next();
+
+        try {
+            Date returnDate = parseDate(returnDateStr);
+            if (returnDate == null) {
+                System.out.println("Invalid date format. Please use YYYY-MM-DD.");
+                return;
+            }
+
+            if (assetService.deallocateAsset(assetId, employeeId, returnDateStr)) {
+                System.out.println("Asset deallocated successfully.");
+            } else {
+                System.out.println("Failed to deallocate asset.");
+            }
+        } catch (AssetNotFoundException e) {
+            System.out.println("Asset not found: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Error deallocating asset: " + e.getMessage());
+        }
+    }
+
+    private static void performMaintenance() throws AssetNotFoundException, AssetNotMaintainException {
+        System.out.print("Enter Asset ID for maintenance: ");
+        int assetId = scanner.nextInt();
+        System.out.print("Enter Maintenance Date (YYYY-MM-DD): ");
+        String maintenanceDateStr = scanner.next();
+        scanner.nextLine();  // Consume newline
+        System.out.print("Enter Maintenance Description: ");
+        String description = scanner.nextLine();
+        System.out.print("Enter Maintenance Cost: ");
+        double cost = scanner.nextDouble();
+
+        try {
+            if (assetService.performMaintenance(assetId, maintenanceDateStr, description, cost)) {
+                System.out.println("Maintenance recorded successfully.");
+            } else {
+                System.out.println("Failed to record maintenance.");
+            }
+        } catch (Exception e) {
+            System.out.println("Error recording maintenance: " + e.getMessage());
+        }
+    }
+
+    private static void reserveAsset() {
+        System.out.print("Enter Asset ID to reserve: ");
+        int assetId = scanner.nextInt();
+        System.out.print("Enter Employee ID making reservation: ");
+        int employeeId = scanner.nextInt();
+        System.out.print("Enter Reservation Date (YYYY-MM-DD): ");
+        String reservationDateStr = scanner.next();
+        System.out.print("Enter Start Date (YYYY-MM-DD): ");
+        String startDateStr = scanner.next();
+        System.out.print("Enter End Date (YYYY-MM-DD): ");
+        String endDateStr = scanner.next();
+
+        try {
+            if (assetService.reserveAsset(assetId, employeeId, reservationDateStr, startDateStr, endDateStr)) {
+                System.out.println("Asset reserved successfully.");
+            } else {
+                System.out.println("Failed to reserve asset.");
+            }
+        } catch (AssetNotFoundException e) {
+            System.out.println("Asset not found: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Error reserving asset: " + e.getMessage());
+        }
+    }
+
+    private static void withdrawReservation() throws AssetNotFoundException {
+        System.out.print("Enter Asset ID for withdrawal: ");
+        int assetId = scanner.nextInt();
+        // Assuming your withdrawReservation method takes only the assetId.
+        try {
+            if (assetService.withdrawReservation(assetId)) {
+                System.out.println("Reservation withdrawn successfully.");
+            } else {
+                System.out.println("Failed to withdraw reservation.");
+            }
+        } catch (Exception e) {
+            System.out.println("Error withdrawing reservation: " + e.getMessage());
+        }
+    }
+
+    private static Date parseDate(String dateStr) {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            return formatter.parse(dateStr);
+        } catch (ParseException e) {
+            return null; // Return null for invalid date format
+        }
+    }
+}

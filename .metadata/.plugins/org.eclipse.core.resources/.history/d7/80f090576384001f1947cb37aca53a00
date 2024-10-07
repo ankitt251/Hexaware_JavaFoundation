@@ -1,0 +1,7 @@
+package com.hexaware.Map;
+
+public class StudentMapDemo {
+	public static void main(String[] args) {
+		
+	}
+}

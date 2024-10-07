@@ -1,0 +1,20 @@
+package com.hexaware.jdbc;
+
+import java.sql.*;
+public class DBConnection {
+	public static void main(String[] args) {
+		String url = "jdbc:mysql://localhost:3308/hexademodb"; // Replace with your database name
+        String user = "root"; // Replace with your MySQL username
+        String password = "root"; // Replace with your MySQL password
+
+        Connection conn = null;
+
+        try {
+            // STEP 1: Load and register MySQL JDBC Driver
+            Class.forName("com.mysql.cj.jdbc.Driver"); // Ensure the correct driver class name
+
+            // STEP 2: Establish the connection
+            System.out.println("Connecting to the database...");
+            conn = DriverManager.getConnection(url, user, password);
+	}
+}

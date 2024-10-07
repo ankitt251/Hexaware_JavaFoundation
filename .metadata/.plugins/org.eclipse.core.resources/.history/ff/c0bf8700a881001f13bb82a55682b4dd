@@ -1,0 +1,73 @@
+package com.revshop.frontend.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+@Controller
+public class FrontendController {
+
+    @GetMapping("/")
+    public String home() {
+        return "index"; // This will return index.jsp (Home Page)
+    }
+
+    @GetMapping("/login")
+    public String showLoginPage(Model model) {
+        model.addAttribute("errorMessage", null); // Clear any previous error message
+        return "login"; // Refers to login.jsp
+    }
+
+    @PostMapping("/login")
+    public String login(
+            @RequestParam String username,
+            @RequestParam String password,
+            RedirectAttributes redirectAttributes) {
+        // Here, you'll call the User-Service API through the API Gateway.
+        // Example: Use RestTemplate or WebClient to authenticate the user
+        
+        // Assume this is the response after calling the User-Service
+        boolean isAuthenticated = callUserServiceForLogin(username, password);
+        
+        if (isAuthenticated) {
+            return "redirect:/dashboard"; // Redirect to some dashboard on success
+        } else {
+            redirectAttributes.addFlashAttribute("errorMessage", "Invalid username or password");
+            return "redirect:/login"; // Redirect back to login page with error
+        }
+    }
+
+    @GetMapping("/register")
+    public String showRegisterPage() {
+        return "register"; // Refers to register.jsp
+    }
+
+    @PostMapping("/register")
+    public String register(
+            @RequestParam String username,
+            @RequestParam String password,
+            @RequestParam String role,
+            RedirectAttributes redirectAttributes) {
+        // Call the User-Service to register a user
+        boolean isRegistered = callUserServiceForRegister(username, password, role);
+
+        if (isRegistered) {
+            return "redirect:/login"; // Redirect to login page on success
+        } else {
+            // Handle registration failure (if required)
+            return "redirect:/register"; // Redirect to register again on failure
+        }
+    }
+
+    // Example methods to call the User-Service (should implement with RestTemplate or WebClient)
+    private boolean callUserServiceForLogin(String username, String password) {
+        // TODO: Implement the API call to User-Service to validate login
+        return true; // Mocked successful response
+    }
+
+    private boolean callUserServiceForRegister(String username, String password, String role) {
+        // TODO: Implement the API call to User-Service to register a user
+        return true; // Mocked successful response
+    }
+}

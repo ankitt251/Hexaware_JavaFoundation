@@ -1,0 +1,7 @@
+INDEX VERSION 1.134
+C:\Users\Ankitt\Documents\RevCartP2\.metadata\.plugins\org.eclipse.jst.jsp.core\jspsearch\1940372933.index
+\frontend\src\main\java
+C:\Users\Ankitt\Documents\RevCartP2\.metadata\.plugins\org.eclipse.jst.jsp.core\jspsearch\1828648470.index
+\frontend\src\main\java
+C:\Users\Ankitt\Documents\RevCartP2\.metadata\.plugins\org.eclipse.jst.jsp.core\jspsearch\1572138563.index
+\frontend\src\main\java

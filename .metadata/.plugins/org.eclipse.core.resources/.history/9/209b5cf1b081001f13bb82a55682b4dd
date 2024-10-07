@@ -1,0 +1,106 @@
+package com.revshop.frontend.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.HashMap;
+import java.util.Map;
+
+@Controller
+public class UserController {
+
+    @Autowired
+    private RestTemplate restTemplate;
+
+    @GetMapping("/")
+    public String home() {
+        return "index"; // This will return index.jsp (Home Page)
+    }
+
+    @GetMapping("/login")
+    public String showLoginPage(Model model) {
+        model.addAttribute("errorMessage", null); // Clear any previous error message
+        return "login"; // Refers to login.jsp
+    }
+
+    @PostMapping("/login")
+    public String login(
+            @RequestParam String username,
+            @RequestParam String password) {
+        // Call the User-Service API through the API Gateway.
+        boolean isAuthenticated = callUserServiceForLogin(username, password);
+
+        if (isAuthenticated) {
+            return "redirect:/dashboard"; // Redirect to some dashboard on success
+        } else {
+            return "redirect:/login"; // Redirect back to login page without message
+        }
+    }
+
+    @GetMapping("/register")
+    public String showRegisterPage() {
+        return "register"; // Refers to register.jsp
+    }
+
+    @PostMapping("/register")
+    public String register(
+            @RequestParam String username,
+            @RequestParam String password,
+            @RequestParam String role) {
+        // Call the User-Service to register a user
+        callUserServiceForRegister(username, password, role);
+
+        // Always redirect to the login page without showing messages
+
+        return "redirect:/login"; // Redirect to login page regardless of success
+        
+    }
+
+    private boolean callUserServiceForLogin(String username, String password) {
+        String url = "http://api-gateway/api/users/login";
+
+        try {
+            // Prepare the request body
+            Map<String, String> request = new HashMap<>();
+            request.put("username", username);
+            request.put("password", password);
+
+            // Send POST request to User-Service via API Gateway
+            ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
+
+            System.out.println("Registering user with data: " + request);
+            return response.getStatusCode() == HttpStatus.OK;
+        } catch (Exception e) {
+            return false; // Consider logging this exception for debugging
+        }
+    }
+
+    private boolean callUserServiceForRegister(String username, String password, String role) {
+        String url = "http://api-gateway/api/users/register";
+
+        try {
+            // Prepare the request body
+            Map<String, String> request = new HashMap<>();
+            request.put("username", username);
+            request.put("password", password);
+            request.put("role", role);
+
+            // Send POST request to User-Service via API Gateway
+            ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
+            System.out.println("Registering user with data: " + request);
+            System.out.println("Register Response: " + response.getStatusCode());
+            System.out.println("Response Body: " + response.getBody());
+            return response.getStatusCode() == HttpStatus.OK; // You can ignore this response if you don't want to show messages
+        } catch (Exception e) {
+            // Log exception if necessary
+            return false; // You can choose to handle this differently if needed
+        }
+    }
+}

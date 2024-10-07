@@ -1,0 +1,5 @@
+package com.revshop.fronted.controller;
+
+public class UserController {
+
+}

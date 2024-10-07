@@ -1,0 +1,122 @@
+package com.revshop.frontend.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.HashMap;
+import java.util.Map;
+
+@Controller
+public class UserController {
+
+    @Autowired
+    private RestTemplate restTemplate;
+
+    @GetMapping("/")
+    public String home() {
+        return "index"; // This will return index.jsp (Home Page)
+    }
+
+    @GetMapping("/login")
+    public String showLoginPage(Model model) {
+        model.addAttribute("errorMessage", null); // Clear any previous error message
+        return "login"; // Refers to login.jsp
+    }
+
+    @PostMapping("/login")
+    public String login(
+            @RequestParam String username,
+            @RequestParam String password,
+            RedirectAttributes redirectAttributes) {
+
+        // Call the User-Service API
+        LoginResponse loginResponse = callUserServiceForLogin(username, password);
+
+        if (loginResponse != null && loginResponse.isSuccess()) {
+            // Redirect based on the user role
+            String role = loginResponse.getRole();
+            if (role.contains("ROLE_ADMIN")) { // Assuming the role string contains "ROLE_ADMIN"
+                return "redirect:/adminHome"; // Redirect to Admin home
+            } else {
+                return "redirect:/userHome"; // Redirect to User home
+            }
+        } else {
+            redirectAttributes.addFlashAttribute("errorMessage", "Invalid username or password");
+            return "redirect:/login"; // Redirect back to login page with error
+        }
+    }
+
+
+
+    @GetMapping("/register")
+    public String showRegisterPage() {
+        return "register"; // Refers to register.jsp
+    }
+
+    @PostMapping("/register")
+    public String register(
+            @RequestParam String username,
+            @RequestParam String password,
+            @RequestParam String role) {
+        // Call the User-Service to register a user
+        callUserServiceForRegister(username, password, role);
+
+        // Always redirect to the login page without showing messages
+
+        return "redirect:/login"; // Redirect to login page regardless of success
+        
+    }
+
+    private String callUserServiceForLogin(String username, String password) {
+        String url = "http://api-gateway/api/users/login";
+        
+        try {
+            Map<String, String> request = new HashMap<>();
+            request.put("username", username);
+            request.put("password", password);
+            
+            ResponseEntity<Map> response = restTemplate.postForEntity(url, request, Map.class);
+            
+            if (response.getStatusCode() == HttpStatus.OK) {
+                // Assuming the User-Service returns a JSON object with the role
+                Map<String, String> responseBody = response.getBody();
+                return responseBody.get("role"); // Assuming response contains the user's role
+            }
+        } catch (Exception e) {
+            System.out.println("Error during login: " + e.getMessage());
+        }
+        return null; // Return null if login fails
+    }
+
+
+    private boolean callUserServiceForRegister(String username, String password, String role) {
+        String url = "http://api-gateway/api/users/register";
+
+        try {
+            // Prepare the request body
+            Map<String, String> request = new HashMap<>();
+            request.put("username", username);
+            request.put("password", password);
+            request.put("role", role);
+
+            // Send POST request to User-Service via API Gateway
+            ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
+            System.out.println("Registering user with data: " + request);
+            System.out.println("Register Response: " + response.getStatusCode());
+            System.out.println("Response Body: " + response.getBody());
+            
+            return response.getStatusCode() == HttpStatus.OK; // You can ignore this response if you don't want to show messages
+        } catch (Exception e) {
+            // Log exception if necessary
+            return false; // You can choose to handle this differently if needed
+        }
+    }
+}

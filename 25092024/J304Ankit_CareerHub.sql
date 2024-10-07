@@ -72,6 +72,7 @@ INSERT INTO Applications (JobID, ApplicantID, ApplicationDate, CoverLetter) VALU
 (3, 2, '2024-08-12 11:20:00', 'I am excited about the Data Analyst opportunity.'),
 (4, 4, '2024-08-13 08:30:00', 'I have extensive experience in backend development and would love to join your team.');
 
+SHOW TABLES;
 
 #Q5
 /* Write an SQL query to count the number of applications received for each job listing in the"Jobs" table. Display the job title and the corresponding application count. Ensure that it lists all
@@ -276,3 +277,19 @@ JOIN  Applications Ap ON A.ApplicantID = Ap.ApplicantID
 JOIN Jobs J ON Ap.JobID = J.JobID
 JOIN Companies C ON J.CompanyID = C.CompanyID
 WHERE C.Location = 'Chennai' AND A.ExperienceYears > 2;
+
+-- find out the department who has more than 5 employees
+ 
+SELECT Dept FROM Employees where COUNT(EmployeeId) > 5 OR deptName like '%sales%';
+
+SELECT Dept FROM Employees where COUNT(Employee) > 5 GROUP BY DeptName, EmployeeName; 
+
+Select CURRENT_DATE;
+SELECT DATETIME;
+select now();
+SELECT CURRENT_TIMESTAMP;
+
+SELECT CONCAT(FirstName, " " , LastName) From Student; 
+
+
+

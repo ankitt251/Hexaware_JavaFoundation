@@ -1,0 +1,16 @@
+package com.hexaware.Map;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
+
+public class StudentMapDemo {
+	public static void main(String[] args) {
+		Scanner scan = new Scanner(System.in);
+		Map<String, Integer> m = new HashMap<>();
+		String name = scan.nextLine();
+		int roll = scan.nextInt();
+		m.put(name, roll);
+		System.out.println(m);
+	}
+}

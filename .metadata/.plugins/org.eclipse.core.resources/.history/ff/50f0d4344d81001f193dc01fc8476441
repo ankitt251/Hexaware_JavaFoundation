@@ -1,0 +1,44 @@
+package com.hexaware.jdbc;
+
+import java.sql.*;
+public class DBConnection {
+	String url = "jdbc:mysql://localhost:3308/hexademodb"; 
+	String user = "root"; 
+	String password = "root"; 
+	static Connection conn = null;
+	public static void main(String[] args) {
+
+
+        try {
+            
+            Class.forName("com.mysql.cj.jdbc.Driver"); 
+
+            
+            System.out.println("Connecting to the database...");
+            conn = DriverManager.getConnection(url, user, password);
+            
+            if (conn != null) {
+                System.out.println("Connected to the database successfully!");
+            }
+
+        } catch (SQLException e) {
+            
+            System.out.println("Failed to connect to the database");
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            
+            System.out.println("MySQL JDBC Driver not found");
+            e.printStackTrace();
+        } finally {
+            try {
+                
+                if (conn != null) {
+                    conn.close();
+                    System.out.println("Connection closed.");
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+	}
+}

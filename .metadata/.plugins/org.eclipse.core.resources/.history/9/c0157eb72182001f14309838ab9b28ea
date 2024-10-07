@@ -1,0 +1,5 @@
+package com.revshop.user_service.repository;
+
+public class RoleRepository {
+
+}

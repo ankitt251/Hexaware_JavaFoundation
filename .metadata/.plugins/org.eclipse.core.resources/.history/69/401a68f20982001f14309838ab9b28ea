@@ -1,0 +1,36 @@
+package com.hexaware.main;
+
+import com.hexaware.dao.AssetManagementService;
+import com.hexaware.dao.AssetManagementServiceImpl;
+import com.hexaware.entity.Asset;
+
+import java.util.Scanner;
+
+public class MainModule {
+    public static void main(String[] args) {
+        AssetManagementService assetService = new AssetManagementServiceImpl();
+        Scanner scanner = new Scanner(System.in);
+        
+        // Menu-driven application logic
+        boolean running = true;
+        while (running) {
+            System.out.println("1. Add Asset");
+            System.out.println("2. Update Asset");
+            System.out.println("3. Delete Asset");
+            System.out.println("4. Allocate Asset");
+            System.out.println("5. Deallocate Asset");
+            System.out.println("6. Perform Maintenance");
+            System.out.println("7. Reserve Asset");
+            System.out.println("8. Withdraw Reservation");
+            System.out.println("9. Exit");
+            System.out.print("Enter your choice: ");
+            int choice = scanner.nextInt();
+            
+            switch (choice) {
+                case 1:
+                    // Handle adding asset
+                    System.out.println("Enter asset details...");
+                    break;
+                case 2:
+                    // Handle updating
+

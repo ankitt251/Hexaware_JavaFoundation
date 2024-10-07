@@ -1,0 +1,5 @@
+package com.revshop.frontend.config;
+
+public class AppConfig {
+
+}
